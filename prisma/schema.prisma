@@ -15,16 +15,5 @@ model User {
   createdAt       DateTime                   @default(now())
   updatedAt       DateTime                   @updatedAt
   email           String                     @unique
-  bearerTokenAuth BearerTokenAuthentication? @relation(fields: [bearerTokenAuthenticationId], references: [id])
-
-  bearerTokenAuthenticationId String?
-}
-
-model BearerTokenAuthentication {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  token     String   @unique
-  userId    String
-  User      User[]
+  bearerTokenAuth String                     @unique
 }
