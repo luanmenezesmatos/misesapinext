@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as jose from 'jose';
 
 export default async function middleware(request: NextRequest) {
-    console.log(request.nextUrl.pathname);
-
     if (request.nextUrl.pathname.startsWith('/api')) {
         if (request.nextUrl.pathname.startsWith('/api/auth')) {
             console.log('entrou');

@@ -1,10 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { NextRequest } from "next/server";
 import * as jose from "jose";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     return Response.json({ message: "Method not allowed." }, { status: 405 });
 }
 
@@ -13,7 +12,7 @@ export async function POST(request: Request) {
         const { email } = await request.json();
 
         if (!email) {
-            return Response.json({ message: "Email, password or name is missing." }, { status: 400 });
+            return Response.json({ message: "Email is missing." }, { status: 400 });
         }
 
         const userWithEmail = await prisma.user.findUnique({
@@ -22,20 +21,22 @@ export async function POST(request: Request) {
             }
         });
 
-        if (userWithEmail) {
-            return Response.json({ message: "Email already exists." }, { status: 400 });
+        if (!userWithEmail) {
+            return Response.json({ message: "User not found." }, { status: 404 });
         }
 
         const alg = "HS256";
         const signature = new TextEncoder().encode(process.env.JWT_SECRET);
         const token = await new jose.SignJWT({ email: email })
             .setProtectedHeader({ alg })
-            .setExpirationTime("1m")
+            .setExpirationTime("5m")
             .sign(signature);
 
-        const user = await prisma.user.create({
+        await prisma.user.update({
+            where: {
+                email: email
+            },
             data: {
-                email: email,
                 bearerTokenAuth: token
             }
         });
@@ -43,11 +44,11 @@ export async function POST(request: Request) {
         return Response.json({
             token: token,
             user: {
-                email: user.email,
-                id: user.id,
+                email: userWithEmail.email,
+                id: userWithEmail.id,
             }
         });
     } catch (err) {
-        return Response.json({ message: "Error creating user." }, { status: 500 });
+        return Response.json({ message: "Error generating token." }, { status: 500 });
     }
 }
