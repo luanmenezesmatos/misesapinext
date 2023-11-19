@@ -48,8 +48,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // return Response.json(data);
-
     const rightAnswers = data.rightAnswers;
     const wrongAnswers = data.wrongAnswers;
     const totalAnswers = rightAnswers + wrongAnswers;

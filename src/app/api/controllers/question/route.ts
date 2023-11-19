@@ -94,11 +94,5 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    /* if (error.response.data) {
-            return Response.json({ code: error.response.data.code, message: error.response.data.message }, { status: error.status });
-        } else {
-            return Response.json({ message: "Error retrieving daily challenge." }, { status: 500 });
-        } */
   }
 }
