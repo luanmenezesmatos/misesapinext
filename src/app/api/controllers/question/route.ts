@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import capitalize from '@/app/utils/capitalize';
+
 export async function POST(request: Request) {
   try {
     const format_subject: Record<string, string> = {
@@ -25,7 +27,7 @@ export async function POST(request: Request) {
       2: 'Difícil',
     };
 
-    const { refresh_token } = await request.json();
+    const { refresh_token, category, level } = await request.json();
 
     if (!refresh_token) {
       return Response.json(
@@ -34,8 +36,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!category) {
+      return Response.json(
+        { message: 'Category is missing.' },
+        { status: 400 }
+      );
+    }
+
+    if (!level) {
+      return Response.json({ message: 'Level is missing.' }, { status: 400 });
+    }
+
     const request_url =
-      (process.env.APP_REQUEST_ENDPOINT as string) + '/daily-challenge';
+      (process.env.APP_REQUEST_ENDPOINT as string) +
+      `/exercise/category/${category}/${level}`;
 
     const { data } = await axios.get(request_url, {
       headers: {
@@ -48,39 +62,25 @@ export async function POST(request: Request) {
       },
     });
 
-    // return Response.json(data);
-
-    const rightAnswers = data.rightAnswers;
-    const wrongAnswers = data.wrongAnswers;
-    const totalAnswers = rightAnswers + wrongAnswers;
-    const averagePercent = Math.round((rightAnswers / totalAnswers) * 100);
-
     return Response.json({
       id: data._id,
-      question: {
-        id: data.question._id,
-        options: data.question.options,
-        tags: data.question.tags,
-        testName: data.question.testName,
-        content: data.question.content,
-        level: data.question.level,
-        formattedLevel: format_level[data.question.level],
-        rightAnswer: data.question.rightAnswer,
-        subjectName: data.question.subjectName,
-        formattedSubject: format_subject[data.question.subjectName],
-        createdAt: data.question.createdAt,
-        updatedAt: data.question.updatedAt,
-      },
-      questionId: data.questionId,
-      rightAnswers: data.rightAnswers,
-      wrongAnswers: data.wrongAnswers,
-      averagePercent: averagePercent,
-      comments: data.comments,
+      options: data.options,
+      tags: data.tags.map((tag: string) => capitalize(tag)),
+      testName: data.testName,
+      content: data.content,
+      level: data.level,
+      formattedLevel: format_level[data.level],
+      rightAnswer: data.rightAnswer,
+      subjectName: data.subjectName,
+      formattedSubject: format_subject[data.subjectName],
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
+
   } catch (error: any) {
-    if (error.response.data) {
+    console.log(error);
+
+    if (error && error.response && error.response.data) {
       return Response.json(
         {
           code: error.response.data.code,
@@ -94,5 +94,11 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    /* if (error.response.data) {
+            return Response.json({ code: error.response.data.code, message: error.response.data.message }, { status: error.status });
+        } else {
+            return Response.json({ message: "Error retrieving daily challenge." }, { status: 500 });
+        } */
   }
 }

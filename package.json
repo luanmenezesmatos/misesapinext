@@ -16,7 +16,8 @@
     "jsonwebtoken": "^9.0.2",
     "next": "14.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "turndown": "github:domchristie/turndown"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -24,6 +25,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/turndown": "^5.0.4",
     "eslint": "^8",
     "eslint-config-next": "14.0.2",
     "prisma": "^5.6.0",
