@@ -1,4 +1,4 @@
-export default function capitalize(phrase: string) {
+export default function capitalize(phrase: string, commas: boolean = false, remove_duplicates: boolean = false) {
   const ignored_words = [
     'e',
     'de',
@@ -65,7 +65,24 @@ export default function capitalize(phrase: string) {
     'lhas',
   ];
 
-  const capitalized_phrase = phrase
+  const separator = commas ? ', ' : ' ';
+
+  let words = phrase
+    .toLowerCase()
+    .split(new RegExp(`${commas ? ', ' : ' '}`))
+    .filter((word, index, array) => !remove_duplicates || array.indexOf(word) === index);
+
+  const capitalized_phrase = words
+    .map((word, index) => {
+      if (index === 0 || !ignored_words.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      } else {
+        return word;
+      }
+    })
+    .join(separator);
+
+  /* const capitalized_phrase = phrase
     .toLowerCase()
     .split(' ')
     .map((word, index) => {
@@ -77,5 +94,5 @@ export default function capitalize(phrase: string) {
     })
     .join(' ');
 
-  return capitalized_phrase;
+  return capitalized_phrase; */
 }
