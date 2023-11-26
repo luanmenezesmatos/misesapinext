@@ -64,23 +64,7 @@ export async function POST(request: Request) {
     } else {
       throw new Error(errorMessages.tokenError);
     }
-
-    /* await prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        bearerTokenAuth: token,
-      },
-    });
-
-    return Response.json({
-      token: token,
-      user: {
-        email: userWithEmail.email,
-        id: userWithEmail.id,
-      },
-    }); */
+    
   } catch (err) {
     return Response.json(
       { message: 'Error generating token.' },
