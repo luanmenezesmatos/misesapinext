@@ -1,12 +1,27 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import supabase from '@/app/api/supabase';
 
 export async function GET(request: Request) {
-  const users = await prisma.user.findMany();
-  return Response.json(users);
-}
+  const errorMessages = {
+    listUsersError: 'Error listing users.',
+  };
 
-export async function POST() {
-  return Response.json({ message: 'Method not allowed.' }, { status: 405 });
+  try {
+    const users = await listUsers();
+    
+    if (users && users.length > 0) {
+      return Response.json({ users });
+    } else {
+      throw new Error(errorMessages.listUsersError);
+    }
+  } catch (error) {
+    return Response.json({ message: errorMessages.listUsersError }, { status: 500 });
+  }
+
+  async function listUsers() {
+    const { data, error } = await supabase.from('apiauth').select('*');
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
 }

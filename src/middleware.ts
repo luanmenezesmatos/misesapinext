@@ -4,8 +4,6 @@ import * as jose from 'jose';
 export default async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/api')) {
     if (request.nextUrl.pathname.startsWith('/api/auth')) {
-      console.log('entrou');
-
       const adminToken = request.headers.get('admin-token') as string;
 
       if (adminToken) {
