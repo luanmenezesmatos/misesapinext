@@ -49,7 +49,12 @@ export default async function middleware(request: NextRequest) {
       const signature = new TextEncoder().encode(process.env.JWT_SECRET);
 
       try {
-        await jose.jwtVerify(token, signature);
+        console.log('token', token);
+        console.log('signature', signature);
+
+        const jwt = await jose.jwtVerify(token, signature);
+
+        console.log('jwt', jwt);
       } catch (error) {
         return NextResponse.json(
           {
