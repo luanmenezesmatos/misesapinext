@@ -3,6 +3,12 @@ import axios from 'axios';
 import capitalize from '@/app/utils/capitalize';
 
 export async function POST(request: Request) {
+  const errorMessages = {
+    400: 'Refresh token is missing.',
+    401: 'Invalid refresh token.',
+    500: 'Error retrieving daily challenge.',
+  };
+
   try {
     const format_subject: Record<string, string> = {
       random: 'Aleatório',
